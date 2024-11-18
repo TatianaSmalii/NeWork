@@ -101,7 +101,6 @@ class UsersRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getJobs(id: Long) {
-        println("getJobs $id")
         try {
             val response = apiService.getUserIdJobs(id)
             val jobs = response.body() ?: throw ApiError(response.code(), response.message())
@@ -116,6 +115,7 @@ class UsersRepositoryImpl @Inject constructor(
             throw UnknownError
         }
     }
+}
 
 //    override suspend fun getJobsBD(id: Long) {
 //        try {
@@ -128,4 +128,3 @@ class UsersRepositoryImpl @Inject constructor(
 //            println("EXCEPTION BASE DATA")
 //        }
 //    }
-}

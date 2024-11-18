@@ -27,7 +27,7 @@ class UsersViewModel @Inject constructor(
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-//    private val _listUsers = MutableLiveData<List<UserResponse>>()
+    //    private val _listUsers = MutableLiveData<List<UserResponse>>()
     val listUsers: LiveData<List<UserResponse>> = usersRepo.allUsers.asLiveData(Dispatchers.Default)
 
 
@@ -61,9 +61,7 @@ class UsersViewModel @Inject constructor(
         _dataState.value = FeedModelState(loading = true)
         viewModelScope.launch {
             try {
-//                _userJobs.value = usersRepo.getJobs(id)
                 usersRepo.getJobs(id)
-//                usersRepo.getJobsBD(id)
                 _dataState.value = FeedModelState()
             } catch (e: Exception) {
                 if (e.javaClass.name == "ru.netology.nework.error.ApiError403") {
@@ -82,7 +80,7 @@ class UsersViewModel @Inject constructor(
 
                 if (e.javaClass.name == "ru.netology.nework.error.ApiError404") {
                     _dataState.value = FeedModelState(error404 = true)
-                    println(e.javaClass.name)
+//                    println(e.javaClass.name)
                 } else _dataState.value = FeedModelState(error = true)
             }
 

@@ -58,13 +58,12 @@ class AuthFragment : Fragment() {
                     viewModel.getAuthFromServer(login, pass)
                 }
             }
-
         }
 
         viewModel.authState.observe(viewLifecycleOwner) { auth ->
             if (pressBtn) {
                 if (auth.login != null && auth.pass != null) {
-                    showBar("Выполнен вход в аккаунт")
+
                     findNavController().popBackStack()
                 } else {
                     AuthViewModel.userAuth = false
