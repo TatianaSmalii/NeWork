@@ -16,16 +16,13 @@ import ru.netology.nework.R
 import ru.netology.nework.activity.AppActivity.Companion.idArg
 import ru.netology.nework.adapter.AdapterScreenPosts
 import ru.netology.nework.adapter.OnIteractionListener
-import ru.netology.nework.auth.AppAuth
 import ru.netology.nework.databinding.ScreenPostsBinding
 import ru.netology.nework.dialog.DialogAuth
 import ru.netology.nework.dto.Post
-import ru.netology.nework.viewmodel.AuthViewModel
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.DIALOG_IN
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.userAuth
 import ru.netology.nework.viewmodel.PostsViewModel
-import javax.inject.Inject
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -66,9 +63,10 @@ class ScreenPosts : Fragment() {
             }
 
             override fun onShare(post: Post) {
+                val txtShare = (post.attachment?.url ?: post.content).toString()
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, post.content)
+                    putExtra(Intent.EXTRA_TEXT, txtShare)
                     type = "text/plain"
                 }
                 val shareIntent =
@@ -87,10 +85,6 @@ class ScreenPosts : Fragment() {
                 //viewModel.loadPosts()
             }
 
-            override fun openLinkVideo(post: Post) {
-
-            }
-
             override fun openCardPost(post: Post) {
                 findNavController().navigate(
                     R.id.postView,
@@ -102,15 +96,17 @@ class ScreenPosts : Fragment() {
         })
         binding?.list?.adapter = adapter
 
+//binding?.list?.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->  }
         viewModel.data.observe(viewLifecycleOwner) { posts ->
-            val state = adapter.currentList.size < posts.size
+//            val newPost = adapter.currentList.size < posts.size
             adapter.submitList(posts)
-            if (state) binding?.list?.smoothScrollToPosition(0)
+//            if (newPost) binding?.list?.smoothScrollToPosition(0)
         }
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding?.progress?.isVisible = state.loading
             binding?.swipeRefreshLayout?.isRefreshing = state.refreshing
+
             if (state.errorNetWork) {
                 Snackbar.make(binding?.root!!, R.string.error_loading, Snackbar.LENGTH_LONG)
                     .setAction(R.string.retry_loading) { viewModel.loadPosts() }
@@ -130,6 +126,7 @@ class ScreenPosts : Fragment() {
 //            if(!state.statusAuth){
 //                showBar("Выход из аккаунта!") выполнен вход
 //            }
+
         }
 
         binding?.swipeRefreshLayout?.setOnRefreshListener {
@@ -187,6 +184,7 @@ class ScreenPosts : Fragment() {
         viewModel.loadPosts()
         super.onStart()
     }
+
     override fun onResume() {
         binding?.bottomNavigation?.selectedItemId = R.id.menu_posts
         super.onResume()
