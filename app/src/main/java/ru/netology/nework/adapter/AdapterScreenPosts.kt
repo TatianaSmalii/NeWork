@@ -57,7 +57,7 @@ class PostViewHolder(
             }
             imageView.visibility = View.GONE
             post.attachment?.let {
-                when (it.attachmentType) {
+                when (it.type) {
                     AttachmentType.IMAGE, null -> {
                         imageView.visibility = View.VISIBLE
                         Glide.with(imageView)
@@ -127,5 +127,4 @@ class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
     override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
         return oldItem == newItem
     }
-
 }

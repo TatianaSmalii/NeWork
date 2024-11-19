@@ -6,6 +6,11 @@
         android:icon="@drawable/photo_camera_24"
         android:title="@string/add_photo" />
     <item
+        android:id="@+id/add_pic"
+        android:enabled="true"
+        android:icon="@drawable/ic_photo_24dp"
+        android:title="@string/pic" />
+    <item
         android:id="@+id/add_file"
         android:enabled="true"
         android:icon="@drawable/attach_24"

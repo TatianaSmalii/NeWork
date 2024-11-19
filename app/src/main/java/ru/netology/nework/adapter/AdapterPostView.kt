@@ -60,7 +60,7 @@ class AdapterPostView @Inject constructor(
     fun bind(post: Post) {
         yandexMapsKitFactory = MapKitFactory.getInstance()
         mapView = binding.map
-        println("postOwner ${post.postOwner}")
+        println("post Id ${post.id} postAttach ${post.attachment}")
         binding.apply {
             author.text = post.author
             published.text = AndroidUtils.getTimePublish(post.published)
@@ -82,7 +82,7 @@ class AdapterPostView @Inject constructor(
             post.coords?.let { layMaps.visibility = View.VISIBLE }
 
             post.attachment?.let {
-                when (it.attachmentType) {
+                when (it.type) {
                     AttachmentType.IMAGE, null -> {
                         imageView.visibility = View.VISIBLE
                         Glide.with(imageView)
@@ -115,14 +115,24 @@ class AdapterPostView @Inject constructor(
                 .into(avatar)
 
             listUsers.visibility = View.GONE
-            if(post.mentionIds?.size!! > 0){
-                layMentions.setOnClickListener{
+            if (post.mentionIds?.size!! > 0) {
+                layMentions.setOnClickListener {
                     println("post ${post.mentionIds}")
                     val users =
-                        listOf("user1", "user2", "user1", "user2", "user1", "user2", "user1", "user2")
-                    val adapter = ArrayAdapter<String>(context, android.R.layout.simple_gallery_item, users)
+                        listOf(
+                            "user1",
+                            "user2",
+                            "user1",
+                            "user2",
+                            "user1",
+                            "user2",
+                            "user1",
+                            "user2"
+                        )
+                    val adapter =
+                        ArrayAdapter<String>(context, android.R.layout.simple_gallery_item, users)
                     listUsers.adapter = adapter
-                    if(listUsers.isVisible)listUsers.visibility = View.GONE
+                    if (listUsers.isVisible) listUsers.visibility = View.GONE
                     else listUsers.visibility = View.VISIBLE
                 }
 

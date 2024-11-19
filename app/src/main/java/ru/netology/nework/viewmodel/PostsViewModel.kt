@@ -119,6 +119,7 @@ class PostsViewModel @Inject constructor(
                     return@launch
                 }
                 repository.savePost(post)
+                _dataState.value = FeedModelState()
 
             } catch (e: Exception) {
                 when (e.javaClass.name) {
@@ -202,6 +203,7 @@ class PostsViewModel @Inject constructor(
         list?.let { _userWall.value = it }
 
     }
+}
 
 //    fun getMentionIds(post: Post) {
 //        var posts = data.value?.map { it }
@@ -220,5 +222,3 @@ class PostsViewModel @Inject constructor(
 //        println(data.value?.size)
 //        println(list?.size)
 //    }
-
-}
