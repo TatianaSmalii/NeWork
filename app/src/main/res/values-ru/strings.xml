@@ -8,6 +8,7 @@
     <string name="description_post_author_avatar">Аватар автора поста</string>
     <string name="preview_video">Предпросмотр видео</string>
     <string name="news">Новости</string>
+    <string name="event">Событие</string>
     <string name="events">События</string>
     <string name="new_posts">Новые посты</string>
     <string name="empty_posts">Пустые посты</string>

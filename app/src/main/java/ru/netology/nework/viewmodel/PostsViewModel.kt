@@ -40,6 +40,9 @@ class PostsViewModel @Inject constructor(
     private val _photo = MutableLiveData(noPhoto)
     val photo: LiveData<PhotoModel>
         get() = _photo
+    private val _typeAttach = MutableLiveData<AttachmentType?>()
+    val typeAttach: LiveData<AttachmentType?>
+        get() = _typeAttach
 
     val data: LiveData<List<Post>> = repository.postsBd
         .asLiveData(Dispatchers.IO)
@@ -95,26 +98,13 @@ class PostsViewModel @Inject constructor(
         }
     }
 
-//    fun savePost(post: Post, upload: MediaUpload?, typeAttach: AttachmentType?) {
-//        _dataState.value = FeedModelState(loading = true)
-//        viewModelScope.launch {
-//            try {
+    fun savePost(post: Post, media: MultipartBody.Part?, typeAttach: AttachmentType?) {
+        _dataState.value = FeedModelState(loading = true)
+        viewModelScope.launch {
+            try {
 //                typeAttach?.let {
-//                    when (typeAttach) {
-//                        AttachmentType.IMAGE -> {
-//
-//                        }
-//
-//                        AttachmentType.VIDEO -> {
-//
-//                        }
-//
-//                        AttachmentType.AUDIO -> {
-//
-//                        }
-//                    }
-//                    upload?.let {
-//                        val media: Media = repository.upload(upload)
+//                    media?.let {
+//                        val media: Media = repository.upload(media)
 //                        val postWithAttachment =
 //                            post.copy(attachment = Attachment(media.url, typeAttach))
 //                        repository.savePost(postWithAttachment)
@@ -123,41 +113,17 @@ class PostsViewModel @Inject constructor(
 //                    return@launch
 //                }
 //                repository.savePost(post)
-//                _dataState.value = FeedModelState()
-//
-//            } catch (e: Exception) {
-//                when (e.javaClass.name) {
-//                    "ru.netology.nework.error.ApiError403" -> {
-//                        _dataState.value = FeedModelState(error403 = true)
-//                    }
-//
-//                    "ru.netology.nework.error.ApiError415" -> {
-//                        _dataState.value = FeedModelState(error415 = true)
-//                    }
-//
-//                    else -> {
-//                        _dataState.value = FeedModelState(error = true)
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-    fun savePost(post: Post, media: MultipartBody.Part?, typeAttach: AttachmentType?) {
-        _dataState.value = FeedModelState(loading = true)
-        viewModelScope.launch {
-            try {
-                typeAttach?.let {
+                if (typeAttach != null) {
                     media?.let {
-                        val media: Media = repository.upload(media)
+                        val _media: Media = repository.upload(media)
                         val postWithAttachment =
-                            post.copy(attachment = Attachment(media.url, typeAttach))
+                            post.copy(attachment = Attachment(_media.url, typeAttach))
                         repository.savePost(postWithAttachment)
                         _dataState.value = FeedModelState()
                     }
-                    return@launch
+                } else {
+                    repository.savePost(post)
                 }
-                repository.savePost(post)
                 _dataState.value = FeedModelState()
 
             } catch (e: Exception) {
@@ -238,6 +204,10 @@ class PostsViewModel @Inject constructor(
 
     }
 
+    fun setTypeAttach(attach: AttachmentType?) {
+        _typeAttach.value = attach
+    }
+
     fun takePosts(list: List<Post>?) {
         list?.let { _userWall.value = it }
 
@@ -284,5 +254,4 @@ class PostsViewModel @Inject constructor(
 //        println(data.value?.size)
 //        println(list?.size)
 //    }
-
 }

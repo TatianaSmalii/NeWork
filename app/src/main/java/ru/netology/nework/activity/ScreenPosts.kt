@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.netology.nework.R
 import ru.netology.nework.activity.AppActivity.Companion.idArg
+import ru.netology.nework.activity.AppActivity.Companion.postArg
 import ru.netology.nework.adapter.AdapterScreenPosts
 import ru.netology.nework.adapter.OnIteractionListener
 import ru.netology.nework.databinding.ScreenPostsBinding
@@ -64,7 +65,7 @@ class ScreenPosts : Fragment() {
             }
 
             override fun onShare(post: Post) {
-                val txtShare = (post.attachment?.url?: post.content).toString()
+                val txtShare = (post.attachment?.url ?: post.content).toString()
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, txtShare)
@@ -77,7 +78,12 @@ class ScreenPosts : Fragment() {
             }
 
             override fun onEdit(post: Post) {
-
+                findNavController().navigate(
+                    R.id.newPostFrag,
+                    Bundle().apply {
+                        postArg = post
+                    }
+                )
             }
 
             override fun onRemove(post: Post) {
@@ -151,9 +157,9 @@ class ScreenPosts : Fragment() {
                 }
 
                 R.id.menu_events -> {
-                    println("click EVENTS")
+//                    println("click EVENTS")
                     findNavController().navigate(
-                        R.id.tmpFrag,
+                        R.id.screenEvents,
                     )
                     true
                 }
@@ -173,7 +179,10 @@ class ScreenPosts : Fragment() {
         binding?.fab?.setOnClickListener {
             if (userAuth) {
                 findNavController().navigate(
-                    R.id.newPostFrag
+                    R.id.newPostFrag,
+                    Bundle().apply {
+                        postArg = null
+                    }
                 )
             } else {
                 DialogAuth.newInstance(

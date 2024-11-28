@@ -11,16 +11,16 @@ import androidx.activity.viewModels
 
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.PopupMenu
-import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.databinding.ActivityAppBinding
 import ru.netology.nework.dialog.DialogAuth
+import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.UserResponse
 import ru.netology.nework.util.ListUserArg
 import ru.netology.nework.util.LongEditArg
+import ru.netology.nework.util.PostArg
 import ru.netology.nework.util.StringArg
 import ru.netology.nework.util.UserArg
 import ru.netology.nework.viewmodel.AuthViewModel
@@ -42,14 +42,13 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
         var Bundle.uriArg: String? by StringArg
         var Bundle.userArg: UserResponse? by UserArg
         var Bundle.listUserArg: List<UserResponse>? by ListUserArg
+        var Bundle.postArg: Post? by PostArg
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val viewModel: AuthViewModel by viewModels()
 
         actionBar = supportActionBar
         imageView = ImageView(this)
@@ -141,6 +140,7 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
                     "Вы вышли из аккаунта.", Toast.LENGTH_LONG
                 )
                     .show()
+
             }
 
             DIALOG_IN -> {
