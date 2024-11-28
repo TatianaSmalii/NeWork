@@ -45,9 +45,7 @@ class AuthViewModel @Inject constructor(
             try {
                 _dataState.value = FeedModelState(loading = true)
                 val user = repository.userReg(login, pass, name, upload) // send to server
-//                user?.let {
-//                    appAuth.setAuth(user?.id, login, pass, user.token)
-//                }
+
                 user?.let {
                     if (user.id != 0L && user.token != null) {
                         appAuth.run {
@@ -81,9 +79,11 @@ class AuthViewModel @Inject constructor(
             try {
                 _dataState.value = FeedModelState(loading = true)
                 val user = repository.userAuth(login, pass) // send to server
+
 //                user?.let {
 //                    appAuth.setAuth(user.id, login, pass, user.token)
 //                }
+
                 if (user?.id != 0L && user?.token != null) {
                     val myAcc = repositoryUser.getUser(user.id)
                     appAuth.run {
@@ -91,6 +91,7 @@ class AuthViewModel @Inject constructor(
                         appAuth.saveMyAcc(myAcc)
                     }
                 }
+
                 myID = user?.id
                 userAuth = true
                 //println(user)

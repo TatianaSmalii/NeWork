@@ -31,6 +31,7 @@ import ru.netology.nework.viewmodel.PostsViewModel
 class ScreenPosts : Fragment() {
     val viewModel: PostsViewModel by viewModels()
     var binding: ScreenPostsBinding? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,7 +64,7 @@ class ScreenPosts : Fragment() {
             }
 
             override fun onShare(post: Post) {
-                val txtShare = (post.attachment?.url ?: post.content).toString()
+                val txtShare = (post.attachment?.url?: post.content).toString()
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, txtShare)
@@ -86,6 +87,7 @@ class ScreenPosts : Fragment() {
             }
 
             override fun openCardPost(post: Post) {
+
                 findNavController().navigate(
                     R.id.postView,
                     Bundle().apply {
@@ -93,10 +95,13 @@ class ScreenPosts : Fragment() {
                     }
                 )
             }
+
         })
         binding?.list?.adapter = adapter
 
 //binding?.list?.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->  }
+
+
         viewModel.data.observe(viewLifecycleOwner) { posts ->
 //            val newPost = adapter.currentList.size < posts.size
             adapter.submitList(posts)
@@ -116,8 +121,8 @@ class ScreenPosts : Fragment() {
             if (state.error403) {
                 userAuth = false
                 myID = null
-
                 showBar("Ошибка авторизации, выполните вход")
+                viewModel.loadPosts()
             }
             if (state.error415) {
                 showBar("Неправильный формат файла!")
@@ -147,6 +152,9 @@ class ScreenPosts : Fragment() {
 
                 R.id.menu_events -> {
                     println("click EVENTS")
+                    findNavController().navigate(
+                        R.id.tmpFrag,
+                    )
                     true
                 }
 

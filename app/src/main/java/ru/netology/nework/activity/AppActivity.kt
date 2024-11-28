@@ -19,6 +19,7 @@ import ru.netology.nework.R
 import ru.netology.nework.databinding.ActivityAppBinding
 import ru.netology.nework.dialog.DialogAuth
 import ru.netology.nework.dto.UserResponse
+import ru.netology.nework.util.ListUserArg
 import ru.netology.nework.util.LongEditArg
 import ru.netology.nework.util.StringArg
 import ru.netology.nework.util.UserArg
@@ -34,12 +35,13 @@ import ru.netology.nework.viewmodel.AuthViewModel.Companion.userAuth
 class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShowFragment {
     private var actionBar: ActionBar? = null
     private var imageView: ImageView? = null
-    val viewModel: AuthViewModel by viewModels()
+    private val viewModel: AuthViewModel by viewModels()
 
     companion object {
         var Bundle.idArg: Long by LongEditArg
         var Bundle.uriArg: String? by StringArg
         var Bundle.userArg: UserResponse? by UserArg
+        var Bundle.listUserArg: List<UserResponse>? by ListUserArg
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,8 +84,8 @@ class AppActivity : AppCompatActivity(), DialogAuth.ReturnSelection, CurrentShow
         imageView?.setOnClickListener {
             PopupMenu(this, it).apply {
                 inflate(R.menu.menu_main)
-                menu.setGroupVisible(R.id.authenticated, AuthViewModel.userAuth)
-                menu.setGroupVisible(R.id.unauthenticated, !AuthViewModel.userAuth)
+                menu.setGroupVisible(R.id.authenticated, userAuth)
+                menu.setGroupVisible(R.id.unauthenticated, !userAuth)
                 setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {
                         R.id.signin -> {

@@ -45,6 +45,7 @@ class ApiModule {
                 return@addInterceptor chain.proceed(newRequest)
             }
             val newRequest = chain.request().newBuilder()
+
                 //.addHeader("Authorization", token)
                 .addHeader("Api-Key", API_KEY)
                 .build()
@@ -72,4 +73,3 @@ class ApiModule {
         retrofit: Retrofit
     ): ApiService = retrofit.create()
 }
-
