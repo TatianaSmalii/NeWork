@@ -1,7 +1,9 @@
 package ru.netology.nework.dto
 
 import com.google.gson.annotations.SerializedName
+import com.yandex.mapkit.geometry.Point
 import ru.netology.nework.enumeration.MeetingType
+
 
 data class Event(
     val id: Long? = null,

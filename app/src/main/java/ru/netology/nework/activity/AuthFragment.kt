@@ -16,7 +16,6 @@ import ru.netology.nework.databinding.AuthFragmentBinding
 import ru.netology.nework.error.UnknownError
 import ru.netology.nework.viewmodel.AuthViewModel
 
-
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
 
@@ -57,12 +56,13 @@ class AuthFragment : Fragment() {
                     viewModel.getAuthFromServer(login, pass)
                 }
             }
+
+
         }
 
         viewModel.authState.observe(viewLifecycleOwner) { auth ->
             if (pressBtn) {
                 if (auth.login != null && auth.pass != null) {
-
                     findNavController().popBackStack()
                 } else {
                     AuthViewModel.userAuth = false
@@ -83,9 +83,11 @@ class AuthFragment : Fragment() {
             if (it.error400) showBar("Неправильный пароль!")
             if (it.error404) showBar("Пользователь не зарегистрирован!")
             binding.statusAuth.isVisible = it.loading
+            println("it = $it")
         }
         return binding.root
     }
+
     private var curFrag: CurrentShowFragment? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -107,5 +109,4 @@ class AuthFragment : Fragment() {
         curFrag?.getCurFragmentAttach(getString(R.string.sign_in))
 
     }
-
 }

@@ -110,8 +110,8 @@ class ScreenUsers : Fragment() {
                     )
                     true
                 }
-
                 R.id.menu_users -> {
+
                     true
                 }
 
@@ -126,4 +126,5 @@ class ScreenUsers : Fragment() {
         binding?.bottomNavigationUsers?.selectedItemId = R.id.menu_users
         super.onResume()
     }
+
 }

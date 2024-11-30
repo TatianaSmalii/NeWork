@@ -1,4 +1,5 @@
 package ru.netology.nework.activity
+
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -40,8 +41,10 @@ class EventView : Fragment() {
     lateinit var yakit: YaKit
     private var audioPl: MPlayer? = null
     var binding: EventViewBinding? = null
+
     private val viewModelEvents: EventsViewModel by viewModels()
     private val viewModelUsers: UsersViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,6 +66,7 @@ class EventView : Fragment() {
                             .show(childFragmentManager, "TAG")
                     }
                 }
+
                 override fun openSpacePhoto(event: Event) {
                     findNavController().navigate(
                         R.id.spacePhoto,
@@ -71,6 +75,7 @@ class EventView : Fragment() {
                         }
                     )
                 }
+
                 override fun playVideo(url: String) {
                     binding?.videoView?.apply {
                         setMediaController(MediaController(context))
@@ -82,6 +87,7 @@ class EventView : Fragment() {
                         }
                     }
                 }
+
                 override fun playAudio(url: String) {
                     if (audioPl == null) {
                         audioPl = MPlayer()
@@ -92,14 +98,17 @@ class EventView : Fragment() {
                                 if (dut != 0) binding?.duration!!.text =
                                     AndroidUtils.getTimeTrack(dut)
                             }
+
                             override fun onCompletionPlay() {
                                 audioPl?.stopPlayer()
                             }
+
                         })
                     } else {
                         audioPl?.pausePlayer()
                     }
                 }
+
                 override fun showUsers(users: List<Long>?) {
                     val list = users?.let { it -> viewModelUsers.selectUsers(it) }
                     findNavController().navigate(
@@ -118,11 +127,14 @@ class EventView : Fragment() {
                 adapterEventView?.bind(event)
             }
         }
+
         viewModelUsers.listUsers.observe(viewLifecycleOwner) {}
+
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_share, menu)
             }
+
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.share -> {
@@ -136,16 +148,21 @@ class EventView : Fragment() {
                         startActivity(shareIntent)
                         true
                     }
+
                     android.R.id.home -> {
                         println("home")
                         findNavController().navigateUp()
                         true
                     }
+
                     else -> false
                 }
+
         }, viewLifecycleOwner)
+
         return binding?.root
     }
+
     private var curFrag: CurrentShowFragment? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -155,20 +172,25 @@ class EventView : Fragment() {
             throw UnknownError
         }
     }
+
     override fun onDetach() {
         super.onDetach()
         curFrag?.getCurFragmentDetach()
         curFrag = null
     }
+
     override fun onStart() {
         super.onStart()
         curFrag?.getCurFragmentAttach(getString(R.string.event))
+
     }
+
     override fun onStop() {
         yakit.stopMapView()
         audioPl?.stopPlayer()
         super.onStop()
     }
+
     override fun onDestroy() {
         audioPl?.stopPlayer()
         super.onDestroy()

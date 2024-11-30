@@ -40,7 +40,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class PostView : Fragment() {
     private var audioPl: MPlayer? = null
-
     @Inject
     lateinit var yakit: YaKit
     override fun onCreateView(
@@ -74,9 +73,11 @@ class PostView : Fragment() {
                         }
 
                         override fun onEdit(post: Post) {
+
                         }
 
                         override fun onRemove(post: Post) {
+
                         }
 
                         override fun playAudio(link: String) {

@@ -61,11 +61,14 @@ class ScreenPosts : Fragment() {
                         "Для установки лайков нужна авторизация, выполнить вход?"
                     )
                         .show(childFragmentManager, "TAG")
+
+//                    DialogAddJob.newInstance("SELECT_DATE", "12321321")
+//                        .show(childFragmentManager, "TAG")
                 }
             }
 
             override fun onShare(post: Post) {
-                val txtShare = (post.attachment?.url ?: post.content).toString()
+                val txtShare = (post.attachment?.url?: post.content).toString()
                 val intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, txtShare)
