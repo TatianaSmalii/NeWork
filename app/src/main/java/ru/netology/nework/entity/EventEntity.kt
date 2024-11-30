@@ -1,4 +1,5 @@
 package ru.netology.nework.entity
+
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,6 +10,7 @@ import ru.netology.nework.dto.Event
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.UserPreview
 import ru.netology.nework.enumeration.MeetingType
+
 @Entity(tableName = "EventsEntity")
 data class EventEntity(
     @PrimaryKey
@@ -32,7 +34,7 @@ data class EventEntity(
     @Embedded
     val attachment: Attachment?,
     @Embedded
-    val coordinates: Coordinates? = null,
+    val coords: Coordinates? = null,
     val eventOwner: Boolean,
 ) {
     fun toDto() = Event(
@@ -53,9 +55,10 @@ data class EventEntity(
         typeMeeting,
         users,
         attachment,
-        coordinates,
+        coords,
         eventOwner,
     )
+
     companion object {
         fun fromDto(dto: Event) = EventEntity(
             dto.id,
@@ -75,10 +78,11 @@ data class EventEntity(
             dto.typeMeeting,
             dto.users,
             dto.attachment,
-            dto.coordinates,
+            dto.coords,
             dto.eventOwner
         )
     }
 }
+
 fun List<EventEntity>.toDto(): List<Event> = map(EventEntity::toDto)
 fun List<Event>.toEntity(): List<EventEntity> = map(EventEntity::fromDto)

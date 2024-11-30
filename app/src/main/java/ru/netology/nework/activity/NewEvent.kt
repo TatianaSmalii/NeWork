@@ -1,4 +1,5 @@
 package ru.netology.nework.activity
+
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -59,9 +60,10 @@ import ru.netology.nework.util.AndroidUtils.getTimeFormat
 import ru.netology.nework.viewmodel.EventsViewModel
 import ru.netology.nework.viewmodel.LaysViewModel
 import ru.netology.nework.viewmodel.UsersViewModel
-import java.text.SimpleDateFormat
 import java.util.Calendar
 import javax.inject.Inject
+
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
 class NewEvent : Fragment() {
@@ -70,15 +72,22 @@ class NewEvent : Fragment() {
     private val viewModelLays: LaysViewModel by viewModels()
     private var event: Event? = null
     private var dateAndTime = Calendar.getInstance()
+
     @Inject
     lateinit var yakit: YaKit
+
+
     private val users = mutableListOf<Long>()
+
     private val inputListener = object : InputListener {
         override fun onMapTap(p0: Map, p1: Point) {}
+
         override fun onMapLongTap(p0: Map, p1: Point) {
             viewModelLays.setLocation(Point(p1.latitude, p1.longitude))
         }
     }
+
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,10 +96,13 @@ class NewEvent : Fragment() {
     ): View {
         var lastStateLoading = false
         event = arguments?.eventArg
-        println("GET EVENT $event")
+//        println("GET EVENT $event")
+
         val binding = NewEventBinding.inflate(layoutInflater)
         yakit.initMapView(binding.map)
+
         val startLocation = Point(55.75, 37.62)
+
         if (viewModelLays.location.value == null) {
             yakit.moveToStartLocation(startLocation)
             yakit.setMarkerInStartLocation(startLocation)
@@ -98,24 +110,31 @@ class NewEvent : Fragment() {
             viewModelLays.location.value?.let { yakit.moveToStartLocation(it) }
             viewModelLays.location.value?.let { yakit.setMarkerInStartLocation(it) }
         }
+
         binding.map.map?.addInputListener(inputListener)
+
         if (event != null && viewModelLays.newStatusViewsModel.value!!.statusNewEvent) {
             viewModelLays.setStatusEdit()
             viewModelLays.setEvent(event!!)
             binding.content.setText(event?.content)
             viewModelLays.location.value?.let { yakit.moveToStartLocation(it) }
         }
+
         viewModelLays.listUsersEvent.value?.forEach { user ->
             users.add(user)
         }
         viewModelUsers.updateCheckableUsers(viewModelLays.listUsersEvent.value!!)
+
         val adapterUsers = AdapterUsersList(object : ListenerSelectionUser {
             override fun selectUser(user: UserResponse?) {
+
             }
+
             override fun addUser(idUser: Long?) {
                 users.add(idUser!!)
                 viewModelLays.changeListUsers(users)
             }
+
             override fun removeUser(idUser: Long?) {
                 if (users.contains(idUser)) {
                     users.remove(idUser)
@@ -123,14 +142,17 @@ class NewEvent : Fragment() {
                 }
             }
         }, true)
+
         binding.listUsers.adapter = adapterUsers
         viewModelUsers.listUsers.observe(viewLifecycleOwner) { users ->
             adapterUsers.submitList(users)
         }
+
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_save, menu)
             }
+
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.save -> {
@@ -138,6 +160,7 @@ class NewEvent : Fragment() {
                         if (viewModelLays.newStatusViewsModel.value?.groupUsers == SHOW) {
                             viewModelLays.setUsersGroup()
                         } else {
+
                             viewModelLays.mediaFile.value?.type?.let {
                                 it.let { type ->
                                     if (type.contains(Regex("audio/"))) viewModelLays.setTypeAttach(
@@ -150,6 +173,7 @@ class NewEvent : Fragment() {
                                 println("MULTI $it")
                                 multiPart = uploadStream(viewModelLays.mediaFile.value!!)
                             }
+
                             if (viewModelLays.typeAttach.value == AttachmentType.IMAGE
                                 && viewModelLays.photo.value?.file != null
                             ) {
@@ -167,21 +191,25 @@ class NewEvent : Fragment() {
                             val text = binding.content.text.toString()
                             val event = viewModelLays.getEvent(text)
                             println("EVENT for send $event")
-//                            viewModelEvent.saveEvent(
-//                                event,
-//                                multiPart,
-//                                viewModelLays.typeAttach.value
-//                            )
+                            viewModelEvent.saveEvent(
+                                event!!,
+                                multiPart,
+                                viewModelLays.typeAttach.value
+                            )
                         }
                         true
                     }
+
                     android.R.id.home -> {
                         findNavController().navigateUp()
                         true
                     }
+
                     else -> false
                 }
+
         }, viewLifecycleOwner)
+
         val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             when (it.resultCode) {
                 ImagePicker.RESULT_ERROR -> {
@@ -191,6 +219,7 @@ class NewEvent : Fragment() {
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
+
                 Activity.RESULT_OK -> {
                     val uri: Uri? = it.data?.data
                     when (viewModelLays.typeAttach.value) {
@@ -205,7 +234,9 @@ class NewEvent : Fragment() {
                                 viewModelLays.setTypeAttach(null)
                                 context?.toast("Размер вложения превышает максимально допустимый 15Мб!")
                             }
+
                         }
+
                         AttachmentType.AUDIO -> {
                             viewModelLays.cleanPhoto()
                             it.data?.data?.let { _uri ->
@@ -222,7 +253,9 @@ class NewEvent : Fragment() {
                                 viewModelLays.setTypeAttach(null)
                                 context?.toast("Неправильный формат файла, загрузите аудио файл!")
                             }
+
                         }
+
                         AttachmentType.VIDEO -> {
                             viewModelLays.cleanPhoto()
                             it.data?.data?.let { _uri ->
@@ -240,13 +273,17 @@ class NewEvent : Fragment() {
                                 context?.toast("Неправильный формат файла, загрузите видео файл!")
                             }
                         }
+
                         else -> {}
                     }
                 }
+
                 Activity.RESULT_CANCELED -> {
+
                 }
             }
         }
+
         fun showViews(status: StatusModelViews) {
             with(binding) {
                 groupImg.visibility = status.groupImage
@@ -256,16 +293,20 @@ class NewEvent : Fragment() {
                 listUsers.visibility = status.groupUsers
                 viewDate.visibility = status.groupDateEvent
             }
+
         }
+
         viewModelLays.newStatusViewsModel.observe(viewLifecycleOwner) { status ->
             showViews(status)
 //            println("status $status, type ${viewModelLays.typeAttach.value}")
         }
+
         viewModelLays.photo.observe(viewLifecycleOwner) {
 //            if (it == viewModelLays.noPhoto) {
 //                binding.content.focusAndShowKeyboard()
 //                return@observe
 //            }
+
             binding.content.clearFocus()
             if (it.file == null) {
                 Glide.with(binding.photo)
@@ -275,6 +316,7 @@ class NewEvent : Fragment() {
                 binding.photo.setImageURI(it.uri)
             }
         }
+
         viewModelLays.mediaFile.observe(viewLifecycleOwner) {
             binding.content.clearFocus()
             when (viewModelLays.typeAttach.value) {
@@ -284,6 +326,7 @@ class NewEvent : Fragment() {
                         .into(binding.icAttach)
                     binding.nameTrack.text = it.name
                 }
+
                 AttachmentType.VIDEO -> {
                     Glide.with(binding.icAttach)
                         .load(R.drawable.video_file_70)
@@ -291,17 +334,21 @@ class NewEvent : Fragment() {
                     binding.nameTrack.text = it.name
                     binding.nameTrack.text = it.name
                 }
+
                 else -> {}
             }
         }
+
         viewModelEvent.dataState.observe(viewLifecycleOwner) {
             if (it.loading) binding.btnClear.visibility = View.GONE
             if (!it.loading && lastStateLoading) findNavController().navigateUp()
             binding.progress.isVisible = it.loading
             lastStateLoading = it.loading
         }
+
         viewModelLays.typeAttach.observe(viewLifecycleOwner) {}
         viewModelLays.listUsersEvent.observe(viewLifecycleOwner) {}
+
         viewModelLays.location.observe(viewLifecycleOwner) {
             it?.let {
                 yakit.cleanMapObject()
@@ -309,6 +356,7 @@ class NewEvent : Fragment() {
                 vibratePhone()
             }
         }
+
         viewModelLays.dateEvent.observe(viewLifecycleOwner) {
             if (viewModelLays.dateEvent.value?.date == null) {
                 viewModelLays.setDataTime(DateEvent(getTime(), null, MeetingType.ONLINE))
@@ -316,6 +364,7 @@ class NewEvent : Fragment() {
             binding.currentDateTime.text = viewModelLays.dateEvent.value?.date
 //            println("currentDateTime ${viewModelLays.dateEvent.value}")
         }
+
         binding.bottomNavigationNewEvent.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.add_pic -> {
@@ -328,8 +377,10 @@ class NewEvent : Fragment() {
                             .maxResultSize(2048, 2048)
                             .createIntent(launcher::launch)
                     } else viewModelLays.setImageGroup()
+
                     true
                 }
+
 //                R.id.photo -> {
 //                    if (viewModelLays.newStatusViewsModel.value?.statusLoadingImg == false) {
 //                        //multiPartBody = null
@@ -343,30 +394,37 @@ class NewEvent : Fragment() {
 //
 //                    true
 //                }
+
                 R.id.add_geo -> {
                     viewModelLays.setViewMaps()
                     true
                 }
+
                 R.id.add_users -> {
                     viewModelLays.setUsersGroup()
                     true
                 }
+
                 R.id.add_file -> {
 //                    val uri = Uri.parse("")
 //                    getFileName(uri, requireContext())
                     viewModelLays.setLoadingGroup()
                     true
                 }
+
                 R.id.add_date -> {
 //                    binding.viewDate.visibility = SHOW
 //                    binding.currentDateTime.text = getTime()
                     viewModelLays.setViewDateEvent()
                     true
                 }
+
                 else -> false
             }
         }
+
         with(binding) {
+
             attachAudio.setOnClickListener {
                 if (viewModelLays.newStatusViewsModel.value?.statusLoadingFile == false) {
                     viewModelLays.setTypeAttach(AttachmentType.AUDIO)
@@ -383,23 +441,28 @@ class NewEvent : Fragment() {
                 cleanContent()
                 viewModelLays.setStatusLoadingFile(false)
             }
+
             btnClear.setOnClickListener {
                 cleanContent()
                 viewModelLays.setLoadingGroup()
                 //viewModelLays.setImageGroup()
             }
-            content.setOnTouchListener { v, event ->
+
+            content.setOnTouchListener { _, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP -> {
                         if (viewModelLays.newStatusViewsModel.value?.geo == SHOW)
                             viewModelLays.setViewMaps()
                         false
                     }
+
                     else -> {
                         true
                     }
                 }
             }
+
+
             dateButton.setOnClickListener {
                 DatePickerDialog(
                     requireContext(),
@@ -407,6 +470,7 @@ class NewEvent : Fragment() {
                     Calendar.getInstance().get(Calendar.YEAR),
                     Calendar.getInstance().get(Calendar.MONTH),
                     Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+
                 ).show()
             }
             timeButton.setOnClickListener {
@@ -418,19 +482,25 @@ class NewEvent : Fragment() {
                     true
                 ).show()
             }
+
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 when (checkedId) {
                     R.id.btn_offline -> {
                         viewModelLays.setMeetingType(MeetingType.OFFLINE)
                     }
+
                     R.id.btn_online -> {
                         viewModelLays.setMeetingType(MeetingType.ONLINE)
                     }
                 }
             }
+
         }
+
         return binding.root
     }
+
+
     @SuppressLint("Recycle")
     private fun getContentLoading(uri: Uri, typeFile: String): MediaModel? {
         val inputStream = context?.contentResolver?.openInputStream(uri)
@@ -441,13 +511,16 @@ class NewEvent : Fragment() {
             MediaModel(uri = uri, name = name, length = length, type = type)
         } else null
     }
+
     private fun cleanContent() {
         //multiPartBody = null
         viewModelLays.cleanPhoto()
         viewModelLays.cleanMedia()
         viewModelLays.setTypeAttach(null)
         viewModelLays.setStatusLoadingImg(false)
+
     }
+
     private fun getIntent() = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
         type = "*/*" // That's needed for some reason, crashes otherwise
@@ -458,6 +531,7 @@ class NewEvent : Fragment() {
             )
         )
     }
+
     fun uploadStream(mediaModel: MediaModel): MultipartBody.Part {
         val inputStream = mediaModel.uri?.let { context?.contentResolver?.openInputStream(it) }
         return MultipartBody.Part.createFormData(
@@ -467,6 +541,7 @@ class NewEvent : Fragment() {
             )
         )
     }
+
     private var curFrag: CurrentShowFragment? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -476,12 +551,14 @@ class NewEvent : Fragment() {
             throw UnknownError
         }
     }
+
     override fun onDetach() {
         super.onDetach()
         curFrag?.getCurFragmentDetach()
         curFrag = null
         yakit.stopMapView()
     }
+
     override fun onStart() {
         super.onStart()
         if (event == null) {
@@ -490,6 +567,7 @@ class NewEvent : Fragment() {
             curFrag?.getCurFragmentAttach(getString(R.string.edit_event))
         }
     }
+
     private fun setInitialDateTime(): String {
         val dateTime = DateUtils.formatDateTime(
             context,
@@ -504,22 +582,26 @@ class NewEvent : Fragment() {
         viewModelLays.setDataTime(DateEvent(dateTime, timeForServer))
         return dateTime
     }
+
     private var timePickerDialog =
-        OnTimeSetListener { view, hourOfDay, minute ->
+        OnTimeSetListener { _, hourOfDay, minute ->
             dateAndTime.set(Calendar.HOUR_OF_DAY, hourOfDay)
             dateAndTime.set(Calendar.MINUTE, minute)
             setInitialDateTime()
         }
+
     // установка обработчика выбора даты
     private var datePickerDialog =
-        OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+        OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
             dateAndTime.set(Calendar.YEAR, year)
             dateAndTime.set(Calendar.MONTH, monthOfYear)
             dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth)
             setInitialDateTime()
         }
+
     private fun Context.toast(message: CharSequence) =
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+
     private fun Fragment.vibratePhone() {
         val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(VibrationEffect.createOneShot(70, VibrationEffect.DEFAULT_AMPLITUDE))

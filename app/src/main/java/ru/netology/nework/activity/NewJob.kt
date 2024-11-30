@@ -1,4 +1,5 @@
 package ru.netology.nework.activity
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,13 +19,17 @@ import ru.netology.nework.dto.Job
 import ru.netology.nework.util.AndroidUtils.getTimeJob
 import ru.netology.nework.viewmodel.AuthViewModel.Companion.myID
 import ru.netology.nework.viewmodel.UsersViewModel
+
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @AndroidEntryPoint
 class NewJob : Fragment() {
     private var startDate: String? = null
     private var finishDate: String? = null
     var binding: NewJobBinding? = null
+
     private val viewModelUser: UsersViewModel by viewModels()
+
     private fun showBar(txt: String) {
         Snackbar.make(
             binding!!.root,
@@ -39,13 +44,16 @@ class NewJob : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         var lastStateLoading = false
+
         binding = NewJobBinding.inflate(layoutInflater)
+
         binding?.let {
             with(it) {
                 dateJob.setOnClickListener {
                     DialogSelectRemoveJob.newInstance(SELECT_DATE, 0)
                         .show(childFragmentManager, "TAG")
                 }
+
                 btnCreate.setOnClickListener {
                     if (
                         fieldName.editText?.text?.isEmpty() == true ||
@@ -62,13 +70,15 @@ class NewJob : Fragment() {
                 }
             }
         }
+
         viewModelUser.dataState.observe(viewLifecycleOwner) {
-            binding?.progressLoad?.isVisible = it.loading
+            binding?.progressLoad?.isVisible = it.loadingJob
             if (it.error403) showBar("Ошибка авторизации,отказано в доступе!")
             if (it.error) showBar("Проверьте ваше подключение к сети!")
-            if (!it.loading && lastStateLoading) findNavController().navigateUp()
-            lastStateLoading = it.loading
+            if (!it.loadingJob && lastStateLoading) findNavController().navigateUp()
+            lastStateLoading = it.loadingJob
         }
+
         return binding!!.root
     }
 
@@ -77,6 +87,5 @@ class NewJob : Fragment() {
         startDate = date.dateStart
         finishDate = date.dateEnd
         binding?.dateJob?.text = "${getTimeJob(startDate)} - ${getTimeJob(finishDate)}"
-        println("DATE JOB $date")
     }
 }

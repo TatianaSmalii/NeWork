@@ -16,4 +16,5 @@ data class StatusModelViews(
     val statusViewLoading: Boolean = false,
     val statusNewEvent: Boolean = true,
     val statusDateEvent: Boolean = false,
+    val statusNewPost: Boolean = true,
 )
