@@ -1,4 +1,5 @@
 package ru.netology.nework.adapter
+
 import android.content.Context
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKit
@@ -13,6 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.netology.nework.R
 import javax.inject.Inject
 import javax.inject.Singleton
+
 @Singleton
 class YaKit @Inject constructor(
     @ApplicationContext
@@ -25,12 +27,15 @@ class YaKit @Inject constructor(
         lateinit var placemarkMapObject: PlacemarkMapObject
         var zoomValue: Float = 16.5f
     }
+
     fun initMapView(view: MapView){
         mapView = view
         yandexMapsKitFactory = MapKitFactory.getInstance()
         yandexMapsKitFactory?.onStart()
         mapView?.onStart()
     }
+
+    @Suppress("DEPRECATION")
     fun moveToStartLocation(point: Point) {
         mapView?.map?.move(
             CameraPosition(point, zoomValue, 0.0f, 0.0f),
@@ -38,6 +43,8 @@ class YaKit @Inject constructor(
             null
         )
     }
+
+    @Suppress("DEPRECATION")
     fun setMarkerInStartLocation(startLocation: Point) {
         val marker = R.drawable.ic_pin_black_png // Добавляем ссылку на картинку
         mapObjectCollection =
@@ -49,9 +56,11 @@ class YaKit @Inject constructor(
         placemarkMapObject.opacity = 0.5f // Устанавливаем прозрачность метке
         placemarkMapObject.setText("Здесь!") // Устанавливаем текст сверху метки
     }
+
     fun cleanMapObject(){
         mapObjectCollection.clear()
     }
+
     fun stopMapView(){
         mapView?.onStop()
         MapKitFactory.getInstance()?.onStop()

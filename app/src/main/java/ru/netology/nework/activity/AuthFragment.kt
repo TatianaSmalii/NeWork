@@ -79,15 +79,14 @@ class AuthFragment : Fragment() {
                 //findNavController().popBackStack()
                 findNavController().navigateUp()
             }
-            if (it.error) showBar("Проверьте ваше подключение к сети!")
             if (it.error400) showBar("Неправильный пароль!")
             if (it.error404) showBar("Пользователь не зарегистрирован!")
+            if (it.error) showBar("Проверьте ваше подключение к сети!")
             binding.statusAuth.isVisible = it.loading
 //            println("it = $it")
         }
         return binding.root
     }
-
     private var curFrag: CurrentShowFragment? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -109,4 +108,5 @@ class AuthFragment : Fragment() {
         curFrag?.getCurFragmentAttach(getString(R.string.sign_in))
 
     }
+
 }
