@@ -32,7 +32,7 @@ import java.lang.reflect.Type
         EventEntity::class,
         PostRemoteKeyEntity::class,
         EventRemoteKeyEntity::class],
-    version = 1
+    version = 2
 )
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao
